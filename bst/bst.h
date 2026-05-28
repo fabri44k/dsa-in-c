@@ -1,5 +1,5 @@
 /**
- * Binary search tree OF INTEGERS using:
+ * Binary search tree OF INTEGERS
  *
  */
 #ifndef BST_H
@@ -25,8 +25,9 @@ Node *minimum(const Bst *);
 Node *maximum(const Bst *);
 void print(const Bst *);
 
-void erase(Bst *, int);
-Node *predecessor(Bst *, Node *);
-Node *successor(Bst *, Node *);
+void delete_node(Bst *, int);
+Node *predecessor(Node *);
+Node *successor(Node *);
+void destroy_tree(Bst *);
 
 #endif // !BST_H

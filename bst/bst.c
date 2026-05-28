@@ -55,7 +55,7 @@ Node *search_helper(Node *start, int data) {
 }
 
 /*
- * Search the node with the provied data into the bst
+ * Search the node with the provided data into the bst
  */
 Node *search(const Bst *bst, int data) {
 
@@ -178,54 +178,6 @@ Node *get_father(Bst *bst, Node *node) {
     return father;
 }
 
-/*
- * Delete the provided node with data from the bst
- *
- */
-void erase(Bst *bst, int data) {
-
-    if (bst == NULL) {
-        fprintf(stderr, "bst has not been initialized\n");
-        return;
-    }
-
-    if (is_empty(bst)) {
-        return;
-    }
-
-    // check if the node exist before starting the deletion
-    Node *node = search(bst, data);
-
-    if (node == NULL) {
-        printf("Node has not been found, unable to delete\n");
-        return;
-    }
-
-    // case 1 leaf node
-    if (node->left == NULL && node->right == NULL) {
-        Node *father = get_father(bst, node);
-
-        // deleting the root node
-        if (father == NULL) {
-            free(node);
-            bst->root = NULL;
-            return;
-        } else {
-            if (father->left == node) {
-                father->left = NULL;
-            } else {
-                father->right = NULL;
-            }
-            free(node);
-        }
-        return;
-    }
-
-    // Case 2: Deleting a Node with One Child
-
-    return;
-}
-
 Node *minimum_helper(Node *node) {
 
     if (node->left == NULL)
@@ -280,4 +232,153 @@ Node *maximum(const Bst *bst) {
     }
 
     return maximum_helper(bst->root);
+}
+/*
+ * Inorder Successor: The node with the smallest key greater than the given key
+ * (minimum in the right subtree)
+ */
+Node *successor(Node *node) {
+    if (node == NULL || node->right == NULL)
+        return NULL;
+
+    Node *successor = minimum_helper(node->right);
+    return successor;
+    // iterative solution (redundant code)
+    // Node *start = node->right;
+
+    // while (start->left != NULL) {
+
+    //     start = start->left;
+    // }
+    // return start;
+}
+
+/*
+ * Inorder Predecessor: The node with the largest key smaller than the given
+ * key (maximum in the left subtree) used for deletion
+ */
+Node *predecessor(Node *node) {
+
+    if (node == NULL || node->left == NULL)
+        return NULL;
+
+    Node *predecessor = maximum_helper(node->left);
+
+    return predecessor;
+    // iterative solution (redundant code)
+    // Node *start = node->left;
+
+    // while (start->right != NULL) {
+
+    //     start = start->right;
+    // }
+    // return start;
+}
+
+/*
+ * Delete the provided node with data from the bst
+ *
+ */
+void delete_node(Bst *bst, int data) {
+
+    if (bst == NULL) {
+        fprintf(stderr, "bst has not been initialized\n");
+        return;
+    }
+
+    if (is_empty(bst)) {
+        return;
+    }
+
+    // check if the node exist before starting the deletion
+    Node *node = search(bst, data);
+
+    if (node == NULL) {
+        printf("Node has not been found, unable to delete\n");
+        return;
+    }
+
+    // case 1 leaf node
+    if (node->left == NULL && node->right == NULL) {
+        Node *father = get_father(bst, node);
+
+        // deleting the root node
+        if (father == NULL) {
+            free(node);
+            bst->root = NULL;
+            return;
+        } else {
+            if (father->left == node) {
+                father->left = NULL;
+            } else {
+                father->right = NULL;
+            }
+            free(node);
+        }
+        return;
+    } // Case 2: Deleting a Node with One Child
+    else if ((node->left != NULL && node->right == NULL) ||
+             (node->left == NULL && node->right != NULL)) {
+
+        Node *son = node->left;
+        if (son == NULL) {
+            son = node->right;
+        }
+        Node *father = get_father(bst, node);
+        if (father == NULL) {
+            bst->root = son;
+            free(node);
+            return;
+        } else {
+            if (father->left == node) {
+                father->left = son;
+            } else {
+                father->right = son;
+            }
+            free(node);
+        }
+        return;
+    } // Case 3: Deleting a Node with Two Children
+    else {
+        // finding predecessor of the node
+        Node *pred = predecessor(node);
+
+        if (pred == NULL) {
+            fprintf(stderr, "Error finding predecessor when deleting node %d",
+                    node->data);
+            return;
+        }
+
+        int temp = pred->data;
+        delete_node(bst, pred->data);
+        node->data = temp;
+        return;
+    }
+
+    return;
+}
+
+void destroy_helper(Node *node) {
+    if (node == NULL) {
+        return;
+    }
+
+    destroy_helper(node->left);
+
+    destroy_helper(node->right);
+
+    free(node);
+}
+
+/**
+ * Free all the memory of the bst
+ */
+void destroy_tree(Bst *bst) {
+    if (bst == NULL) {
+        fprintf(stderr, "bst has not been initialized\n");
+        return;
+    }
+
+    destroy_helper(bst->root);
+    bst->root = NULL;
 }
