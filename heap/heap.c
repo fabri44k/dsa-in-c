@@ -70,3 +70,95 @@ void resize_heap(heap *h) {
     h->capacity = new_cap;
     return;
 }
+
+void print_heap(const heap *h) {
+
+    if (is_empty(h)) {
+        printf("Empty heap [ ]\n");
+        return;
+    }
+    printf("[ ");
+    for (size_t i = 0; i < h->size; ++i) {
+        printf(" %d ,", h->array[i]);
+    }
+
+    printf(" ]\n");
+}
+
+void swap(int *a, int *b) {
+    int temp = *a;
+    *a = *b;
+    *b = temp;
+    return;
+}
+
+/**
+ * Insert a new value into the heap
+ */
+void insert(heap *h, int data) {
+
+    if (h->capacity == h->size) {
+        resize_heap(h);
+    }
+    int current = h->size;
+
+    h->array[current] = data;
+    h->size++;
+
+    int parent_index = get_parent_index(current);
+
+    while (current > 0 && (h->array[current] > h->array[parent_index])) {
+        swap(&h->array[current], &h->array[parent_index]);
+        current = parent_index;
+        parent_index = get_parent_index(current);
+    }
+    return;
+}
+
+/**
+ * Extract max value from the heap.
+ */
+int extract_max(heap *h) {
+    if (is_empty(h)) {
+        fprintf(stderr, "Provided heap is empty");
+        return 0;
+    }
+
+    int value = h->array[0];
+
+    if (h->size == 1) {
+        h->size--;
+        return value;
+    }
+
+    h->array[0] = h->array[h->size - 1];
+    h->size--;
+
+    size_t current = 0;
+
+    int right_ch_index = get_right_child_index(current);
+    int *right_ch = &h->array[right_ch_index];
+
+    int left_ch_index = get_left_child_index(current);
+    int *left_ch = &h->array[left_ch_index];
+
+    int larger_ch_index =
+        (*right_ch >= *left_ch) ? right_ch_index : left_ch_index;
+
+    while (current < h->size &&
+           (h->array[current] < *right_ch || h->array[current] < *left_ch)) {
+        swap(&h->array[current], &h->array[larger_ch_index]);
+        current = larger_ch_index;
+
+        right_ch_index = get_right_child_index(current);
+        right_ch = &h->array[right_ch_index];
+
+        left_ch_index = get_left_child_index(current);
+        left_ch = &h->array[left_ch_index];
+
+        larger_ch_index =
+            (*right_ch >= *left_ch) ? right_ch_index : left_ch_index;
+    }
+
+    return value;
+}

@@ -20,10 +20,9 @@ void create_heap(heap *);
 size_t get_heap_size(const heap *);
 int is_empty(const heap *);
 int peek_max(const heap *);
-
 void insert(heap *, int);
-int extract_max(heap *);
-void delete_max(heap *);
 void print_heap(const heap *);
+
+int extract_max(heap *);
 
 #endif // HEAP_H
