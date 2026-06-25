@@ -119,45 +119,52 @@ void insert(heap *h, int data) {
  * Extract max value from the heap.
  */
 int extract_max(heap *h) {
+
     if (is_empty(h)) {
         fprintf(stderr, "Provided heap is empty");
         return 0;
     }
 
+    // take the root node
     int value = h->array[0];
 
+    // case only one element
     if (h->size == 1) {
         h->size--;
         return value;
     }
 
+    // replacing the old root with the last element
     h->array[0] = h->array[h->size - 1];
+    // deleting last node
     h->size--;
 
-    size_t current = 0;
+    // heap property
 
-    int right_ch_index = get_right_child_index(current);
-    int *right_ch = &h->array[right_ch_index];
+    size_t curr = 0;
+    size_t left = 1;
+    size_t right = 2;
+    size_t largest = left;
 
-    int left_ch_index = get_left_child_index(current);
-    int *left_ch = &h->array[left_ch_index];
+    while (left < h->size) {
 
-    int larger_ch_index =
-        (*right_ch >= *left_ch) ? right_ch_index : left_ch_index;
+        // find the largest node
+        largest = left;
 
-    while (current < h->size &&
-           (h->array[current] < *right_ch || h->array[current] < *left_ch)) {
-        swap(&h->array[current], &h->array[larger_ch_index]);
-        current = larger_ch_index;
+        if (right < h->size && h->array[left] < h->array[right]) {
+            largest = right;
+        }
 
-        right_ch_index = get_right_child_index(current);
-        right_ch = &h->array[right_ch_index];
+        if (h->array[curr] < h->array[largest]) {
 
-        left_ch_index = get_left_child_index(current);
-        left_ch = &h->array[left_ch_index];
+            swap(&h->array[curr], &h->array[largest]);
+            curr = largest;
+        } else {
+            break;
+        }
 
-        larger_ch_index =
-            (*right_ch >= *left_ch) ? right_ch_index : left_ch_index;
+        left = 2 * curr + 1;
+        right = 2 * curr + 2;
     }
 
     return value;
