@@ -14,9 +14,13 @@ int main(void) {
     insert(&h, 3);
     insert(&h, 2);
 
-    for (int i = 20; i > 3; --i) {
-        insert(&h, i);
-    }
+    // for (int i = 20; i > 3; --i) {
+    //     insert(&h, i);
+    // }
+
+    int array[] = {20, 60, 5, 54, 17, 63, 85, 2, 69, 33};
+
+    add_array_to_heap(&h, array, 10);
 
     print_heap(&h);
 

@@ -169,3 +169,20 @@ int extract_max(heap *h) {
 
     return value;
 }
+
+/**
+ * Add the provided len elementes of array to the heap.
+ * It will the insert operation for each element in the array.
+ */
+void add_array_to_heap(heap *h, int *array, size_t len) {
+
+    if (h == NULL) {
+        fprintf(stderr, "Provided heap is null");
+        return;
+    }
+
+    for (size_t i = 0; i < len; ++i) {
+        insert(h, array[i]);
+    }
+    return;
+}

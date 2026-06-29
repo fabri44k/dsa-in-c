@@ -17,6 +17,7 @@ struct heap {
 typedef struct heap heap;
 
 void create_heap(heap *);
+void add_array_to_heap(heap *, int *, size_t);
 size_t get_heap_size(const heap *);
 int is_empty(const heap *);
 int peek_max(const heap *);
